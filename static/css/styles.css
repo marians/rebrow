@@ -1,0 +1,51 @@
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat-Regular'), url(/static/fonts/montserrat-regular.woff) format('woff');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Montserrat-Bold'), url(/static/fonts/montserrat-bold.woff) format('woff');
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  margin-top: 70px;
+  margin-bottom: 60px;
+}
+
+.navbar-brand {
+	font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+	font-size: 18px;
+	color: #000;
+}
+.navbar-brand .re {
+	color: #dd3023;
+}
+
+.logo {
+	font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+}
+.logo .re {
+	color: #dd3023;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #f5f5f5;
+  font-size: 12px;
+}
+
+.footer > div {
+	margin-top: 10px;
+}
+

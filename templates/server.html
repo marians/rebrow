@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+	<div class="breadcrumb">
+		<a href="/">Home</a> /
+		{{ host}}:{{port}} DB {{ db }}
+	</div>
+
+	<div class="row">
+
+		<div class="col-md-3 col-md-push-9">
+
+			<p>Used Memory: {{ info["used_memory_human"] }}, peak: {{ info["used_memory_peak_human"] }})</p>
+
+			<p><strong>{{ dbsize }} Keys available.</strong></p>
+
+			<form action="keys" method="get">Find keys matching pattern: <input name="pattern" value="*" /></form>
+			<div>or <a href="keys/">list all keys</a></div>
+			
+
+		</div>
+
+		<div class="col-md-9 col-md-pull-3">
+
+			<ul class="nav nav-tabs" role="tablist" id="serverstatus-tabs">
+			  <li class="active"><a href="#overall">Overall Status</a></li>
+			  <li><a href="#commands">Command Statistics</a></li>
+			</ul>
+
+			<div class="tab-content">
+			  <div class="tab-pane active" id="overall">
+			
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Key</th>
+								<th>Value</th>
+								<th>Description</h>
+							</tr>
+						</thead>
+						<tbody>
+						{% for item in info|dictsort %}
+							{% if "cmdstat_" not in item[0] %}
+							<tr>
+								<td><code>{{ item[0] }}</code></td>
+								<td><code>{{ item[1] }}</code></td>
+								<td>
+									{% if item[0] in serverinfo_meta and serverinfo_meta[item[0]] != None %}
+									{{ serverinfo_meta[item[0]] }}
+									{% endif%}
+								</td>
+							</tr>
+							{% endif%}
+						{% endfor %}
+						</tbody>
+					</table>
+
+				</div>
+			  <div class="tab-pane" id="commands">
+
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Command</th>
+								<th>Calls</th>
+								<th>Call Share</th>
+								<th>Duration (Microseconds)</h>
+								<th>Duration/Call</h>
+							</tr>
+						</thead>
+						<tbody>
+						{% for item in info|dictsort %}
+							{% if item[1]["calls"] %}
+								<tr>
+									<td><code>{{ item[0]|replace("cmdstat_", "") }}</code></td>
+									<td class="text-right">{{ item[1]["calls"] }}</td>
+									<td class="text-right">{{ "%.2f"|format(item[1]["calls"] / info["total_commands_processed"] * 100) }} %</td>
+									<td class="text-right">{{ item[1]["usec"] }}</td>
+									<td class="text-right">{{ "%.1f"|format(item[1]["usec_per_call"]) }}</td>
+								</tr>
+							{% endif%}
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block body %}
+
+	<ol class="breadcrumb">
+		<li><a href="/">Home</a></li>
+		<li><a href="../..">{{ host}}:{{port}} DB {{ db }}</a></li>
+		<li><a href="..">Keys</a></li>
+		<li class="active">{{ key }}</li>
+	</ol>
+
+	<h1>Key: {{ key }}</h1>
+
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Key</th>
+				<td><input type="text" value="{{ key }}" readonly="readonly" style="border: none; width: 100%; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;" /></td>
+			</tr>
+			<tr>
+				<th>Type</th>
+				<td><code>{{ type }}</code></td>
+			</tr>
+			<tr>
+				<th>Size</th>
+				<td>{{ size }} Bytes
+
+				{% if size > (1024*1024) %}
+				({{ "%.1f"|format(size / 1024.0 / 1024.0) }} MB)
+				{% elif size > 1024 %}
+				({{ "%.1f"|format(size / 1024.0) }} KB)
+				{% endif %}
+				</td>
+			</tr>
+			<tr>
+				<th>Expiration</th>
+				<td>
+					{% if ttl < 0 %}
+						<span class="label label-warning">No expiration set</span>
+					{% else %}
+						<code>{{ ttl }}</code> Seconds from now (<code>{{ expiration }}</code>)
+					{% endif %}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	{% if type == "string" %}
+
+		<h2>String Value</h2>
+		<code>{{ value }}</code>
+
+	{% elif type == "list" or type == "set" or type == "zset" %}
+
+		<h2>Values</h2>
+		<ol>
+		{% for item in value %}
+			<li><code>{{ item }}</code></li>
+		{% endfor %}
+		</ol>
+
+	{% elif type == "hash" %}
+
+		<h2>Hash keys and values</h2>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+		{% for item in value|dictsort %}
+			<tr>
+				<td></td>
+				<td><code>{{ item[0] }}</code></td>
+				<td><code>{{ item[1] }}</code></td>
+			</tr>
+		{% endfor %}
+			</tbody>
+		</table>
+
+	{% endif %}
+
+{% endblock %}
