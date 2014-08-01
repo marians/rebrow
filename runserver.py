@@ -13,13 +13,13 @@ app.secret_key = "lasfuoi3ro8w7gfow3bwiubdwoeg7p23r8g23rg"
 # Description of info keys
 # TODO: to be continued.
 serverinfo_meta = {
-    "aof_current_rewrite_time_sec": "Duration of the on-going AOF rewrite operation if any",
-    "aof_enabled": "Flag indicating AOF logging is activated",
-    "aof_last_bgrewrite_status": "Status of the last AOF rewrite operation",
-    "aof_last_rewrite_time_sec": "Duration of the last AOF rewrite operation in seconds",
-    "aof_last_write_status": "Status of last AOF write operation",
-    "aof_rewrite_in_progress": "Flag indicating a AOF rewrite operation is on-going",
-    "aof_rewrite_scheduled": "Flag indicating an AOF rewrite operation will be scheduled once the on-going RDB save is complete",
+    "aof_current_rewrite_time_sec": "Duration of the on-going <abbr title='Append-Only File'>AOF</abbr> rewrite operation if any",
+    "aof_enabled": "Flag indicating <abbr title='Append-Only File'>AOF</abbr> logging is activated",
+    "aof_last_bgrewrite_status": "Status of the last <abbr title='Append-Only File'>AOF</abbr> rewrite operation",
+    "aof_last_rewrite_time_sec": "Duration of the last <abbr title='Append-Only File'>AOF</abbr> rewrite operation in seconds",
+    "aof_last_write_status": "Status of last <abbr title='Append-Only File'>AOF</abbr> write operation",
+    "aof_rewrite_in_progress": "Flag indicating a <abbr title='Append-Only File'>AOF</abbr> rewrite operation is on-going",
+    "aof_rewrite_scheduled": "Flag indicating an <abbr title='Append-Only File'>AOF</abbr> rewrite operation will be scheduled once the on-going RDB save is complete",
     "arch_bits": "Architecture (32 or 64 bits)",
     "blocked_clients": "Number of clients pending on a blocking call (BLPOP, BRPOP, BRPOPLPUSH)",
     "client_biggest_input_buf": "biggest input buffer among current client connections",

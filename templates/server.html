@@ -47,7 +47,7 @@
 								<td><code>{{ item[1] }}</code></td>
 								<td>
 									{% if item[0] in serverinfo_meta and serverinfo_meta[item[0]] != None %}
-									{{ serverinfo_meta[item[0]] }}
+									{{ serverinfo_meta[item[0]]|safe }}
 									{% endif%}
 								</td>
 							</tr>
