@@ -10,6 +10,8 @@ app = Flask(__name__)
 
 app.secret_key = "lasfuoi3ro8w7gfow3bwiubdwoeg7p23r8g23rg"
 
+# Description of info keys
+# TODO: to be continued.
 serverinfo_meta = {
     "aof_current_rewrite_time_sec": "Duration of the on-going AOF rewrite operation if any",
     "aof_enabled": "Flag indicating AOF logging is activated",
@@ -140,11 +142,13 @@ def server_db(host, port, db):
     s = time.time()
     r = redis.StrictRedis(host=host, port=port, db=0)
     info = r.info("all")
+    dbsize = r.dbsize()
     return render_template('server.html',
         host=host,
         port=port,
         db=db,
         info=info,
+        dbsize=dbsize,
         serverinfo_meta=serverinfo_meta,
         duration=time.time()-s)
 
