@@ -4,11 +4,12 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 import redis
 import time
 from datetime import datetime, timedelta
+import os
 
 app = Flask(__name__)
 
-
-app.secret_key = "lasfuoi3ro8w7gfow3bwiubdwoeg7p23r8g23rg"
+# key for cookie safety. Shal be overridden using ENV var SECRET_KEY
+app.secret_key = os.getenv("SECRET_KEY", "lasfuoi3ro8w7gfow3bwiubdwoeg7p23r8g23rg")
 
 # Description of info keys
 # TODO: to be continued.
