@@ -123,10 +123,10 @@ def login():
     """
     if request.method == 'POST':
         # TODO: test connection, handle failures
-        host = request.args.get("host", "localhost")
-        port = int(request.args.get("port", "6379"))
-        db = int(request.args.get("db", "0"))
-        url = url_for('server_db', host=host, port=port, db=db)
+        host = request.form["host"]
+        port = int(request.form["port"])
+        db = int(request.form["db"])
+        url = url_for("server_db", host=host, port=port, db=db)
         return redirect(url)
     else: 
         s = time.time()
