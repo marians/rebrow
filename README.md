@@ -29,12 +29,16 @@ Then open [127.0.0.1:5001](http://127.0.0.1:5001).
 
 ## Running as Docker container
 
-If you run redis in a Docker container, the recommended way is to run rebrow in it's own Docker container, too. The provided `Dockerfile` can be used to create the according image. The `Makefile` contains example commands to build the image and run a container from the image.
+If you run redis in a Docker container, the recommended way is to run rebrow in it's own Docker container, too.
+
+You can use the ready-made public image `[marian/rebrow](https://registry.hub.docker.com/u/marian/rebrow/)`.
+
+Alternatively, the provided `Dockerfile` can be used to create the according image. The `Makefile` contains example commands to build the image and run a container from the image.
 
 When running the image, make sure to get your links right. For example, if your redis server is running in a container named `myredis`, start your rebrow container like this:
 
 ```
-docker run --rm -ti -p 5001:5001 --link myredis:myredis rebrow
+docker run --rm -ti -p 5001:5001 --link myredis:myredis marian/rebrow
 ```
 
 Then access rebrow via `http://<your-docker-ip>:5001/` and set the host name in the login screen to `myredis`.
