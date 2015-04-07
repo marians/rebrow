@@ -2,7 +2,7 @@ FROM debian:wheezy
 
 MAINTAINER Marian Steinbach <marian@giantswarm.io>
 
-ENV DEBIAN_FROMTEND noninteractive
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -q
 
