@@ -38,7 +38,14 @@ $CMD HSET hash_02 field02 "Value of field_02"
 $CMD HSET hash_02 field03 1234567
 $CMD HSET hash_02 field04 5.6789
 
-# keep service idle
+# Sorted Sets
+$CMD ZADD zset_01 1 "First zset member"
+$CMD ZADD zset_01 2 "Second zset member"
+$CMD ZADD zset_01 3 "Third zset member"
+$CMD ZADD zset_01 4 "Fourth zset member"
+$CMD ZADD zset_01 5 "Fifth zset member"
+
+# keep Docker container idle
 while [ 1 ]
 do
     $CMD ping
