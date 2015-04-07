@@ -41,7 +41,7 @@
 	    	<tr>
 	    		<td class="text-right" style="width: 5%">{{ loop.index + offset }}</td>
 	    		<td>{{ types[key] }}</td>
-	    		<td><a href="{{ key|urlencode }}/">{{ key }}</a></td>
+	    		<td><a href="{{ key|urlsafe_base64 }}/">{{ key }}</a></td>
 	    		<td><form method="POST"><input type="hidden" name="action" value="delkey" /><input type="hidden" name="key" value="{{ key }}" /><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-trash"></span></button></form></td>
 	    	</tr>
 			{% endfor %}
