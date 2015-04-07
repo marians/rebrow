@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <ol class="breadcrumb">
+    <li><a href="/">Home</a></li>
+    <li><a href="/{{ host}}:{{port}}/{{ db }}/">{{ host}}:{{port}} DB {{ db }}</a></li>
+    <li class="active">PubSub</li>
+  </ol>
+
+  <table class="table table-hover pubsub-messages">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Pattern</th>
+        <th>Type</th>
+        <th>Channel</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+{% endblock %}

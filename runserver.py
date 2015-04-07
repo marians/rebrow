@@ -1,6 +1,6 @@
 # encoding: utf8
 
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Markup
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Markup, Response, json
 import redis
 import time
 from datetime import datetime, timedelta
@@ -239,6 +239,34 @@ def key(host, port, db, key):
         duration=time.time()-s)
 
 
+@app.route("/<host>:<int:port>/<int:db>/pubsub/")
+def pubsub(host, port, db):
+    """
+    List PubSub channels
+    """
+    s = time.time()
+    return render_template('pubsub.html',
+        host=host,
+        port=port,
+        db=db,
+        duration=time.time()-s)
+
+
+def pubsub_event_stream(host, port, db, pattern):
+    r = redis.StrictRedis(host=host, port=port, db=db)
+    p = r.pubsub()
+    p.psubscribe(pattern)
+    for message in p.listen():
+        if message["type"] != "psubscribe" and message["data"] != "1":
+            yield 'data: %s\n\n' % json.dumps(message)
+
+
+@app.route("/<host>:<int:port>/<int:db>/pubsub/api/")
+def pubsub_ajax(host, port, db):
+    return Response(pubsub_event_stream(host, port, db, pattern="*"),
+           mimetype="text/event-stream")
+
+
 @app.template_filter('urlsafe_base64')
 def urlsafe_base64_encode(s):
     if type(s) == 'Markup':
@@ -249,4 +277,4 @@ def urlsafe_base64_encode(s):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False, port=5001)
+    app.run(host="0.0.0.0", debug=False, port=5001, threaded=True)
