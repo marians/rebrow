@@ -45,9 +45,9 @@ $CMD ZADD zset_01 3 "Third zset member"
 $CMD ZADD zset_01 4 "Fourth zset member"
 $CMD ZADD zset_01 5 "Fifth zset member"
 
-# keep Docker container idle
+# send messages to pubsub channel
 while [ 1 ]
 do
-    $CMD ping
-    sleep 60
+    $CMD PUBLISH pubsub_01 "Message published at `date`"
+    sleep 10
 done
