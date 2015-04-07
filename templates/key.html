@@ -95,6 +95,7 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
+					<th>Rank</th>
 					<th>Score</th>
 					<th>Value</th>
 				</tr>
@@ -102,6 +103,7 @@
 			<tbody>
 		{% for item in value %}
 			<tr>
+				<td>{{ loop.index0 }}</td>
 				<td><code>{{ item[1] }}</code></td>
 				<td><code>{{ item[0] }}</code></td>
 			</tr>
