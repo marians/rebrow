@@ -12,6 +12,7 @@ some runtime and configuration information.
 * Lightweight requirements
 * Search for keys using patterns
 * Delete single keys
+* Show PubSub messages
 * Show server statistics
 
 ## Quick Start
