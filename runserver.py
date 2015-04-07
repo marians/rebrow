@@ -224,7 +224,7 @@ def key(host, port, db, key):
     elif t == "set":
         val = r.smembers(key)
     elif t == "zset":
-        val = r.zrange(key, 0, -1)
+        val = r.zrange(key, 0, -1, withscores=True)
     return render_template('key.html',
         host=host,
         port=port,
