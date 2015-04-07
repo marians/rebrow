@@ -33,6 +33,12 @@
           	class="active"
           	{% endif %}
           	><a href="/{{ host }}:{{ port }}/{{ db }}/keys/">Keys</a></li>
+
+            <li
+            {% if url_for("pubsub", host=host, port=port, db=db) in request.path %}
+            class="active"
+            {% endif %}
+            ><a href="/{{ host }}:{{ port }}/{{ db }}/pubsub/">PubSub</a></li>
           {% endif %}
         </ul>
       </div><!--/.nav-collapse -->
@@ -72,7 +78,6 @@
     </div>
   </div>
 
-  
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script>
@@ -80,8 +85,20 @@
   	$('#serverstatus-tabs a').click(function (e) {
 		  e.preventDefault()
 		  $(this).tab('show');
-		})
-  })
+		});
+    if ($(".pubsub-messages").length) {
+      var counter = 0;
+      var source = new EventSource("api/");
+      source.onmessage = function(event) {
+        counter++;
+        var data = JSON.parse(event.data);
+        $(".pubsub-messages tbody").prepend("<tr><td>"+ counter +"</td><td><code>"+ data.pattern +"</code></td><td><code>"+ data.type +"</code></td><td><code>"+ data.channel +"</code></td><td><code>"+ data.data +"</code></td></tr>");
+        // truncate list to 20 items max
+        $(".pubsub-messages tbody > tr:eq(20)").remove();
+      };
+    }
+  });
+  
   </script>
 </body>
 </html>
