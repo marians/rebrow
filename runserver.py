@@ -1,10 +1,11 @@
 # encoding: utf8
 
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Markup
 import redis
 import time
 from datetime import datetime, timedelta
 import os
+import base64
 
 app = Flask(__name__)
 
@@ -199,8 +200,10 @@ def keys(host, port, db):
 @app.route("/<host>:<int:port>/<int:db>/keys/<key>/")
 def key(host, port, db, key):
     """
-    Show a specific key
+    Show a specific key.
+    key is expected to be URL-safe base64 encoded
     """
+    key = base64.urlsafe_b64decode(key.encode("utf8"))
     s = time.time()
     r = redis.StrictRedis(host=host, port=port, db=db)
     dump = r.dump(key)
@@ -234,6 +237,15 @@ def key(host, port, db, key):
         now=datetime.utcnow(),
         expiration=datetime.utcnow() + timedelta(seconds=ttl / 1000.0),
         duration=time.time()-s)
+
+
+@app.template_filter('urlsafe_base64')
+def urlsafe_base64_encode(s):
+    if type(s) == 'Markup':
+        s = s.unescape()
+    s = s.encode('utf8')
+    s = base64.urlsafe_b64encode(s)
+    return Markup(s)
 
 
 if __name__ == "__main__":
