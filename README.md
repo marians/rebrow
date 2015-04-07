@@ -2,7 +2,7 @@ rebrow - Python-Flask-based Browser for Redis Content
 =====================================================
 
 Built for the developer who needs to look into a Redis store.
-Allows for inspection and deletion of keys. Also displays
+Allows for inspection and deletion of keys and follows PubSub messages. Also displays
 some runtime and configuration information.
 
 ## Features
