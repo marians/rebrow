@@ -1,0 +1,14 @@
+rebrow:
+    build: ..
+    ports:
+     - "5001:5001"
+    links:
+     - redis
+fillredis:
+    build: fillredis
+    links:
+     - redis
+redis:
+    image: redis
+    ports:
+     - "6379:6379"
