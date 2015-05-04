@@ -4,15 +4,17 @@ MAINTAINER Marian Steinbach <marian@giantswarm.io>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update -q
+COPY requirements.txt /requirements.txt
 
-RUN apt-get install -qy --no-install-recommends python-pip build-essential python-dev
+RUN set -x \
+	&& apt-get update -q \
+	&& apt-get install -qy --no-install-recommends \
+	python-pip build-essential python-dev \
+	&& pip install -r requirements.txt \
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false build-essential python-dev \
+	&& rm -rf /var/lib/apt/lists/*
 
-ADD requirements.txt /requirements.txt
-
-RUN pip install -r requirements.txt
-
-ADD runserver.py /runserver.py
+COPY runserver.py /runserver.py
 ADD static /static
 ADD templates /templates
 
