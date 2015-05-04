@@ -1,4 +1,4 @@
-FROM debian:wheezy
+FROM debian:jessie
 
 MAINTAINER Marian Steinbach <marian@giantswarm.io>
 
