@@ -216,7 +216,7 @@ def key(host, port, db, key):
     t = r.type(key)
     ttl = r.pttl(key)
     if t == "string":
-        val = r.get(key)
+        val = r.get(key).decode('utf-8', 'replace')
     elif t == "list":
         val = r.lrange(key, 0, -1)
     elif t == "hash":
@@ -230,7 +230,7 @@ def key(host, port, db, key):
         port=port,
         db=db,
         key=key,
-        value=val.decode('utf-8', 'ignore'),
+        value=val,
         type=t,
         size=size,
         ttl=ttl / 1000.0,
