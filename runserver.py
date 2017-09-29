@@ -230,7 +230,7 @@ def key(host, port, db, key):
         port=port,
         db=db,
         key=key,
-        value=val,
+        value=val.decode('utf-8', 'ignore'),
         type=t,
         size=size,
         ttl=ttl / 1000.0,
