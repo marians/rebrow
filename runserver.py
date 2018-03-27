@@ -2,6 +2,8 @@
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Markup, Response, json
 import redis
+from redis.sentinel import Sentinel
+
 import time
 from datetime import datetime, timedelta
 import os
@@ -117,6 +119,16 @@ serverinfo_meta = {
     "used_memory_rss": None
 }
 
+def get_redis(host, port, db, password, sentinel):
+    if sentinel == 'on':
+        _sentinel = Sentinel([(host, port)], socket_timeout=0.1)
+        return sentinel.master_for(
+            'mymaster', db=db, password=password, socket_timeout=0.1)
+    else:
+        if password == "":
+            return redis.StrictRedis(host=host, port=port, db=db)
+        else:
+            return redis.StrictRedis(host=host, port=port, db=db, password=password)
 
 @app.route("/", methods=['GET', 'POST'])
 def login():
@@ -128,7 +140,13 @@ def login():
         host = request.form["host"]
         port = int(request.form["port"])
         db = int(request.form["db"])
-        url = url_for("server_db", host=host, port=port, db=db)
+        sentinel = request.form.get("sentinel")
+        if sentinel is None:
+            sentinel = 'off'
+        
+        password = request.form["password"]
+		
+        url = url_for("server_db", host=host, port=port, db=db, password=password, sentinel=sentinel)
         return redirect(url)
     else: 
         s = time.time()
@@ -142,13 +160,19 @@ def server_db(host, port, db):
     List all databases and show info on server
     """
     s = time.time()
-    r = redis.StrictRedis(host=host, port=port, db=0)
+	
+    password = request.args.get('password', default = '', type=str)
+    sentinel = request.args.get('sentinel', default = 'off', type=str)
+    
+    r = get_redis(host, port, db, password, sentinel)
+	    
     info = r.info("all")
     dbsize = r.dbsize()
     return render_template('server.html',
         host=host,
         port=port,
         db=db,
+        password=password,
         info=info,
         dbsize=dbsize,
         serverinfo_meta=serverinfo_meta,
@@ -161,7 +185,12 @@ def keys(host, port, db):
     List keys for one database
     """
     s = time.time()
-    r = redis.StrictRedis(host=host, port=port, db=db)
+    
+    password = request.args.get('password', default = '', type=str)
+    sentinel = request.args.get('sentinel', default = 'off', type=str)
+    
+    r = get_redis(host, port, db, password, sentinel)
+
     if request.method == "POST":
         action = request.form["action"]
         app.logger.debug(action)
@@ -187,6 +216,7 @@ def keys(host, port, db):
             host=host,
             port=port,
             db=db,
+            password=password,
             dbsize=dbsize,
             keys=limited_keys,
             types=types,
@@ -205,7 +235,12 @@ def key(host, port, db, key):
     """
     key = base64.urlsafe_b64decode(key.encode("utf8"))
     s = time.time()
-    r = redis.StrictRedis(host=host, port=port, db=db)
+    
+    password = request.args.get('password', default = '', type=str)
+    sentinel = request.args.get('sentinel', default = 'off', type=str)
+    
+    r = get_redis(host, port, db, password, sentinel)
+    
     dump = r.dump(key)
     if dump is None:
         abort(404)
@@ -229,6 +264,7 @@ def key(host, port, db, key):
         host=host,
         port=port,
         db=db,
+        password=password,
         key=key,
         value=val,
         type=t,
@@ -245,15 +281,21 @@ def pubsub(host, port, db):
     List PubSub channels
     """
     s = time.time()
+    
+    password = request.args.get('password', default = '', type=str)
+    sentinel = request.args.get('sentinel', default = 'off', type=str)
+    
     return render_template('pubsub.html',
         host=host,
         port=port,
         db=db,
+        password=password,
+        sentinel=sentinel,
         duration=time.time()-s)
 
 
-def pubsub_event_stream(host, port, db, pattern):
-    r = redis.StrictRedis(host=host, port=port, db=db)
+def pubsub_event_stream(host, port, db, password, sentinel, pattern):
+    r = get_redis(host, port, db, password, sentinel)
     p = r.pubsub()
     p.psubscribe(pattern)
     for message in p.listen():
@@ -263,14 +305,21 @@ def pubsub_event_stream(host, port, db, pattern):
 
 @app.route("/<host>:<int:port>/<int:db>/pubsub/api/")
 def pubsub_ajax(host, port, db):
-    return Response(pubsub_event_stream(host, port, db, pattern="*"),
+    
+    password = request.args.get('password', default = '', type=str)
+    sentinel = request.args.get('sentinel', default = 'off', type=str)
+        
+    return Response(pubsub_event_stream(host, port, db, password, sentinel, pattern="*"),
            mimetype="text/event-stream")
 
 
 @app.template_filter('urlsafe_base64')
 def urlsafe_base64_encode(s):
-    if type(s) == 'Markup':
+    if isinstance(s, Markup):
         s = s.unescape()
+    elif isinstance(s, bytes):
+        s = s.decode('utf-8')
+        
     s = s.encode('utf8')
     s = base64.urlsafe_b64encode(s)
     return Markup(s)
