@@ -23,22 +23,22 @@
         <ul class="nav navbar-nav">
         	{% if request.path != "/" %}
         		<li 
-        		{% if url_for("server_db", host=host, port=port, db=db, password=password, sentinel=sentinel) == request.path %}
+        		{% if url_for("server_db", host=host, port=port, db=db, client_token=client_token, sentinel=sentinel) == request.path %}
           	class="active"
           	{% endif %}
-          	><a href="/{{ host }}:{{ port }}/{{ db }}/?password={{ password }}&sentinel={{ sentinel }}">Server Status</a></li>
+          	><a href="/{{ host }}:{{ port }}/{{ db }}/?client_token={{ client_token }}&sentinel={{ sentinel }}">Server Status</a></li>
 
           	<li
-          	{% if url_for("keys", host=host, port=port, db=db, password=password, sentinel=sentinel) in request.path %}
+          	{% if url_for("keys", host=host, port=port, db=db, client_token=client_token, sentinel=sentinel) in request.path %}
           	class="active"
           	{% endif %}
-          	><a href="/{{ host }}:{{ port }}/{{ db }}/keys/?password={{ password }}&sentinel={{ sentinel }}">Keys</a></li>
+          	><a href="/{{ host }}:{{ port }}/{{ db }}/keys/?client_token={{ client_token }}&sentinel={{ sentinel }}">Keys</a></li>
 
             <li
-            {% if url_for("pubsub", host=host, port=port, db=db, password=password, sentinel=sentinel) in request.path %}
+            {% if url_for("pubsub", host=host, port=port, db=db, client_token=client_token, sentinel=sentinel) in request.path %}
             class="active"
             {% endif %}
-            ><a href="/{{ host }}:{{ port }}/{{ db }}/pubsub/?password={{ password }}&sentinel={{ sentinel }}">PubSub</a></li>
+            ><a href="/{{ host }}:{{ port }}/{{ db }}/pubsub/?client_token={{ client_token }}&sentinel={{ sentinel }}">PubSub</a></li>
           {% endif %}
         </ul>
       </div><!--/.nav-collapse -->

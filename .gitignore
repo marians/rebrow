@@ -54,3 +54,9 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+
+# pycharm directory
+/.idea
+
+# ignore settings files.
+*settings.py
