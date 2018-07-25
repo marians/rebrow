@@ -41,6 +41,23 @@ When running the image, make sure to get your links right. For example, if your 
 ```
 docker run --rm -ti -p 5001:5001 --link myredis:myredis marian/rebrow
 ```
+Or, if you are using docker-compose:
+
+```
+...
+myredis:
+  image: redis
+  hostname: myredis
+  ports:
+    - "6379:6379"
+gui:
+  image: marian/rebrow
+  links:
+    - "myredis:myredis"
+  ports:
+    - "5001:5001"
+...
+```
 
 Then access rebrow via `http://<your-docker-ip>:5001/` and set the host name in the login screen to `myredis`.
 
