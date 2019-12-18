@@ -127,7 +127,8 @@ def login():
         # TODO: test connection, handle failures
         host = request.form["host"]
         port = int(request.form["port"])
-        session['password'] = request.form["password"]
+        password = request.form["password"]
+        session['password'] = password if password != '' else None
         db = int(request.form["db"])
         url = url_for("server_db", host=host, port=port, db=db)
         return redirect(url)
