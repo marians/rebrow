@@ -130,7 +130,7 @@ def login():
         db = int(request.form["db"])
         url = url_for("server_db", host=host, port=port, db=db)
         return redirect(url)
-    else: 
+    else:
         s = time.time()
         return render_template('login.html',
             duration=time.time()-s)
@@ -175,14 +175,22 @@ def keys(host, port, db):
         return redirect(request.url)
     else:
         offset = int(request.args.get("offset", "0"))
-        perpage = int(request.args.get("perpage", "10"))
+        perpage = int(request.args.get("perpage", "100"))
         pattern = request.args.get('pattern', '*')
         dbsize = r.dbsize()
         keys = sorted(r.keys(pattern))
+
         limited_keys = keys[offset:(perpage+offset)]
         types = {}
+        size = {}
         for key in limited_keys:
-            types[key] = r.type(key)
+            rtype = r.type(key)
+            try:
+                rsize = str(r.llen(key))
+            except:
+                rsize = ''
+            size[key] = rsize
+            types[key] = rtype
         return render_template('keys.html',
             host=host,
             port=port,
@@ -190,6 +198,7 @@ def keys(host, port, db):
             dbsize=dbsize,
             keys=limited_keys,
             types=types,
+            size=size,
             offset=offset,
             perpage=perpage,
             pattern=pattern,
@@ -209,8 +218,6 @@ def key(host, port, db, key):
     dump = r.dump(key)
     if dump is None:
         abort(404)
-    #if t is None:
-    #    abort(404)
     size = len(dump)
     del dump
     t = r.type(key)
@@ -277,4 +284,4 @@ def urlsafe_base64_encode(s):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False, port=5001, threaded=True)
+    app.run(host="192.168.100.124", debug=False, port=8010, threaded=True)
