@@ -74,7 +74,7 @@ def deploy(symlink='current', branch="", client="", environment="", variant="",
     execute(create_sym_link, name=symlink)
     execute(pip_install, symlink=symlink)
     execute(delete_archive)
-    # execute(update_supervisorctl)
+    execute(update_supervisorctl)
 
 
 def get_hosts(h):
