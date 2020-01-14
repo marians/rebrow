@@ -5,16 +5,16 @@
 		<li><a href="/">Home</a></li>
 		<li><a href="../..">{{ host}}:{{port}} DB {{ db }}</a></li>
 		<li><a href="..">Keys</a></li>
-		<li class="active">{{ key }}</li>
+		<li class="active">{{ key.decode() }}</li>
 	</ol>
 
-	<h1>Key: {{ key }}</h1>
+	<h1>Key: {{ key.decode() }}</h1>
 
 	<table class="table">
 		<tbody>
 			<tr>
 				<th>Key</th>
-				<td><input type="text" value="{{ key }}" readonly="readonly" style="border: none; width: 100%; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;" /></td>
+				<td><input type="text" value="{{ key.decode() }}" readonly="readonly" style="border: none; width: 100%; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;" /></td>
 			</tr>
 			<tr>
 				<th>Type</th>
@@ -54,7 +54,7 @@
 		<h2>Values</h2>
 		<ol>
 		{% for item in value %}
-			<li><code>{{ item }}</code></li>
+			<li><code>{{ item.decode() }}</code></li>
 		{% endfor %}
 		</ol>
 
@@ -63,7 +63,7 @@
 		<h2>Values</h2>
 		<ul>
 		{% for item in value|sort %}
-			<li><code>{{ item }}</code></li>
+			<li><code>{{ item.decode() }}</code></li>
 		{% endfor %}
 		</ul>
 

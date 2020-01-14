@@ -17,7 +17,7 @@
 {% endif %}
 
 	<nav class="navbar navbar-default" role="navigation">
-		
+
 		<form class="navbar-form navbar-left" role="search" method="GET" action="./">
 		  <div class="form-group">
 		    <input name="pattern" type="text" class="form-control" placeholder="{{ pattern }}" value="{{ pattern }}">
@@ -25,7 +25,7 @@
 		  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Search</button>
 		  <a href="./" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Reset</a>
 		</form>
-		
+
 	</nav>
 
 	<table class="table table-hover">
@@ -41,8 +41,8 @@
 			{% for key in keys %}
 	    	<tr>
 	    		<td class="text-right" style="width: 5%">{{ loop.index + offset }}</td>
-	    		<td>{{ types[key] }}</td>
-	    		<td><a href="{{ key|urlsafe_base64 }}/">{{ key }}</a></td>
+    		<td>{{ types[key] }}</td>
+	    		<td><a href="{{ key|urlsafe_base64 }}/">{{ key.decode('utf8') }}</a></td>
 					<td>{{ size[key] }}</td>
 	    		<td><form method="POST"><input type="hidden" name="action" value="delkey" /><input type="hidden" name="key" value="{{ key }}" /><button class="btn btn-default" type="submit" onclick="return confirm('Are you sure you want to delete this key? {{ key }}');"><span class="glyphicon glyphicon-trash"></span></button></form></td>
 	    	</tr>

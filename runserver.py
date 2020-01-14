@@ -220,7 +220,7 @@ def key(host, port, db, key):
         abort(404)
     size = len(dump)
     del dump
-    t = r.type(key)
+    t = r.type(key).decode()
     ttl = r.pttl(key)
     if t == "string":
         val = r.get(key).decode('utf-8', 'replace')
@@ -278,7 +278,9 @@ def pubsub_ajax(host, port, db):
 def urlsafe_base64_encode(s):
     if type(s) == 'Markup':
         s = s.unescape()
-    s = base64.urlsafe_b64encode(s)
+    if isinstance(s, (bytes, bytearray)):
+        s = s.decode()
+    s = base64.urlsafe_b64encode(s.encode('utf8')).decode()
     return Markup(s)
 
 
