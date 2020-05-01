@@ -59,8 +59,8 @@ def aws_get_instance_dns_names(environment='dev'):
 
 
 @task
-def deploy(symlink='current', branch="", client="", environment="", variant="",
-           hostfilter=''):
+def deploy(symlink='current', branch='', client='', environment='', variant='',
+           hostfilter='', deploy_command=''):
     """Main deploy task"""
     if hostfilter:
         env.hosts = get_hosts(hostfilter)
