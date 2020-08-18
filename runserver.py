@@ -161,7 +161,7 @@ def keys(host, port, db):
     List keys for one database
     """
     s = time.time()
-    r = redis.StrictRedis(host=host, port=port, db=db)
+    r = redis.StrictRedis(host=host, port=port, db=db, charset="utf-8", decode_responses=True)
     if request.method == "POST":
         action = request.form["action"]
         app.logger.debug(action)
