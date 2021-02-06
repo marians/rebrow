@@ -18,7 +18,7 @@ In the spirit of open source here are my goals:
 * Move the code into Flask blueprint pattern. ✅
 * Add docker-compose file with a Redis instance for testing. ✅
 * Bump flask dependency from 1.0 to 1.1.0 ✅
-* Add (*optional*) password support for Redis instances (thanks to [kveroneau](https://github.com/kveroneau))
+* Add (*optional*) password support for Redis instances (thanks to [kveroneau](https://github.com/kveroneau)) ✅
 
 ## Primary Features
 
