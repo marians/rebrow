@@ -1,24 +1,23 @@
 rebrow-modernized - Python-Flask-based Browser for Redis Content
 =====================================================
 
-![Start screen](https://farm4.staticflickr.com/3913/14615623267_c4a38b4fe1_c.jpg)
-
-Built for the developer who needs to look into a Redis store.
-Allows for inspection and deletion of keys and follows PubSub messages. Also displays
-some runtime and configuration information.
-
 ## Fork Info
 
-I'm Jon D. Kelley and forked this because the upstream was abandoned.
+I forked this because the upstream seems abandoned.
 I've added some features for my workplace at [LogDNA](https://logdna.com/).
 
-In the spirit of open source here are my goals:
+Here's the features added in this fork:
 
 * Upgrade for Python3 (unicode support) ✅
 * Move the code into Flask blueprint pattern. ✅
 * Add docker-compose file with a Redis instance for testing. ✅
 * Bump flask dependency from 1.0 to 1.1.0 ✅
 * Add (*optional*) password support for Redis instances (thanks to [kveroneau](https://github.com/kveroneau)) ✅
+
+## Project Information
+
+Built for the Python developer who needs to look into a Redis store. Allows for inspection and deletion of keys and follows PubSub messages. Also displays
+some runtime and configuration information.
 
 ## Primary Features
 
