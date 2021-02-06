@@ -4,6 +4,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 import redis
 import time
 from datetime import datetime, timedelta
+from json import loads as json_loads
 import os
 import base64
 
@@ -217,6 +218,10 @@ def key(host, port, db, key):
     ttl = r.pttl(key)
     if t == b"string":
         val = r.get(key).decode("utf-8", "replace")
+        try:
+            val = json.dumps(json_loads(val), indent=3)
+        except ValueError:
+            pass
     elif t == b"list":
         val = r.lrange(key, 0, -1)
     elif t == b"hash":
