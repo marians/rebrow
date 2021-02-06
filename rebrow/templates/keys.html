@@ -51,15 +51,15 @@
 	{% if num_keys > perpage %}
 	<ul class="pagination">
 	  {% if offset > 0 %}
-	  <li><a href="{{ url_for('keys', host=host, port=port, db=db, offset=(offset-perpage), perpage=perpage, pattern=pattern) }}">&laquo;</a></li>
+	  <li><a href="{{ url_for('rebrow.keys', host=host, port=port, db=db, offset=(offset-perpage), perpage=perpage, pattern=pattern) }}">&laquo;</a></li>
 	  {% endif %}
-	  <li><a href="{{ url_for('keys', host=host, port=port, db=db, offset=0, perpage=perpage, pattern=pattern) }}">1</a></li>
-	  <li><a href="{{ url_for('keys', host=host, port=port, db=db, offset=perpage, perpage=perpage, pattern=pattern) }}">2</a></li>
-	  <li><a href="{{ url_for('keys', host=host, port=port, db=db, offset=(perpage*2), perpage=perpage, pattern=pattern) }}">3</a></li>
-	  <li><a href="{{ url_for('keys', host=host, port=port, db=db, offset=(perpage*3), perpage=perpage, pattern=pattern) }}">4</a></li>
-	  <li><a href="{{ url_for('keys', host=host, port=port, db=db, offset=(perpage*4), perpage=perpage, pattern=pattern) }}">5</a></li>
+	  <li><a href="{{ url_for('rebrow.keys', host=host, port=port, db=db, offset=0, perpage=perpage, pattern=pattern) }}">1</a></li>
+	  <li><a href="{{ url_for('rebrow.keys', host=host, port=port, db=db, offset=perpage, perpage=perpage, pattern=pattern) }}">2</a></li>
+	  <li><a href="{{ url_for('rebrow.keys', host=host, port=port, db=db, offset=(perpage*2), perpage=perpage, pattern=pattern) }}">3</a></li>
+	  <li><a href="{{ url_for('rebrow.keys', host=host, port=port, db=db, offset=(perpage*3), perpage=perpage, pattern=pattern) }}">4</a></li>
+	  <li><a href="{{ url_for('rebrow.keys', host=host, port=port, db=db, offset=(perpage*4), perpage=perpage, pattern=pattern) }}">5</a></li>
 	  {% if num_keys > (offset + perpage) %}
-	  <li><a href="{{ url_for('keys', host=host, port=port, db=db, offset=(offset+perpage), perpage=perpage, pattern=pattern) }}">&raquo;</a></li>
+	  <li><a href="{{ url_for('rebrow.keys', host=host, port=port, db=db, offset=(offset+perpage), perpage=perpage, pattern=pattern) }}">&raquo;</a></li>
 	  {% endif %}
 	</ul>
 	{% endif %}

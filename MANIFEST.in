@@ -1,0 +1,2 @@
+include rebrow/templates/*
+recursive-include rebrow/static *.css *.map *.svg *.ttf *.eot *.js

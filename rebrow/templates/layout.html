@@ -23,19 +23,19 @@
         <ul class="nav navbar-nav">
         	{% if request.path != "/" %}
         		<li 
-        		{% if url_for("server_db", host=host, port=port, db=db) == request.path %}
+        		{% if url_for("rebrow.server_db", host=host, port=port, db=db) == request.path %}
           	class="active"
           	{% endif %}
           	><a href="/{{ host }}:{{ port }}/{{ db }}/">Server Status</a></li>
 
           	<li
-          	{% if url_for("keys", host=host, port=port, db=db) in request.path %}
+          	{% if url_for("rebrow.keys", host=host, port=port, db=db) in request.path %}
           	class="active"
           	{% endif %}
           	><a href="/{{ host }}:{{ port }}/{{ db }}/keys/">Keys</a></li>
 
             <li
-            {% if url_for("pubsub", host=host, port=port, db=db) in request.path %}
+            {% if url_for("rebrow.pubsub", host=host, port=port, db=db) in request.path %}
             class="active"
             {% endif %}
             ><a href="/{{ host }}:{{ port }}/{{ db }}/pubsub/">PubSub</a></li>
