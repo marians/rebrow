@@ -34,7 +34,7 @@ In the spirit of open source here are my goals:
 
 Execute this:
 
-    git clone https://github.com/marians/rebrow.git
+    git clone https://github.com/jondkelley/rebrow-modernized.git
     cd rebrow
     virtualenv venv
     source venv/bin/activate
@@ -60,7 +60,7 @@ A redis server is started in tandem with hostname `redis` for your convienence.
 
 If you run redis in a Docker container, the recommended way is to run rebrow in it's own Docker container, too.
 
-You can use the ready-made public image [marian/rebrow](https://registry.hub.docker.com/u/marian/rebrow/).
+You can use the ready-made public image [jondkelley/rebrow](https://registry.hub.docker.com/r/jondkelley/rebrow).
 
 Alternatively, the provided `Dockerfile` can be used to create the according image. The `Makefile` contains example commands to build the image and run a container from the image.
 
