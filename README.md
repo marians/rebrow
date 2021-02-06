@@ -1,21 +1,23 @@
 rebrow-modernized - Python-Flask-based Browser for Redis Content
 =====================================================
 
+![Start screen](https://farm4.staticflickr.com/3913/14615623267_c4a38b4fe1_c.jpg)
+
 Built for the developer who needs to look into a Redis store.
 Allows for inspection and deletion of keys and follows PubSub messages. Also displays
 some runtime and configuration information.
 
 ## Fork Info
 
-Forked because the upstream is looking pretty abandoned.
+I'm Jon D. Kelley and forked this because the upstream was abandoned.
 I've added some features for my workplace at [LogDNA](https://logdna.com/).
 
 In the spirit of open source here are my goals:
 
-* Upgrade for Python3 (unicode support)
-* Move the code into Flask blueprint pattern.
-* Add docker-compose file with a Redis instance for testing.
-* Bump flask dependency from 1.0 to 1.1.2
+* Upgrade for Python3 (unicode support) ✅
+* Move the code into Flask blueprint pattern. ✅
+* Add docker-compose file with a Redis instance for testing. ✅
+* Bump flask dependency from 1.0 to 1.1.0 ✅
 * Add (*optional*) password support for Redis instances (thanks to [kveroneau](https://github.com/kveroneau))
 
 ## Primary Features
@@ -36,8 +38,8 @@ Execute this:
     cd rebrow
     virtualenv venv
     source venv/bin/activate
-    pip install -r requirements.txt
-    python runserver.py
+    python3 setup.py install
+    rebrow &
 
 Then open [127.0.0.1:5001](http://127.0.0.1:5001).
 
@@ -52,10 +54,15 @@ Alternatively, the provided `Dockerfile` can be used to create the according ima
 When running the image, make sure to get your links right. For example, if your redis server is running in a container named `myredis`, start your rebrow container like this:
 
 ```
-docker run --rm -ti -p 5001:5001 --link myredis:myredis marian/rebrow
+docker run --rm -ti -p 5001:5001 --link myredis:myredis jondkelley/rebrow:latest
 ```
 
-Then access rebrow via `http://<your-docker-ip>:5001/` and set the host name in the login screen to `myredis`.
+Then access rebrow via `http://<your-docker-ip>:5001/` and set the host name in the login screen to `redis` or your Redis instance if it's something else..
+
+## Contributers
+
+* 2014 Marian Steinbach
+* 2021 Jonathan Kelley
 
 ## License
 
