@@ -43,6 +43,19 @@ Execute this:
 
 Then open [127.0.0.1:5001](http://127.0.0.1:5001).
 
+## Running in docker-compose
+
+If you have docker-compose installed, you can simply run
+
+```
+docker-compose build
+docker-compose up
+```
+
+Then open [127.0.0.1:5001](http://127.0.0.1:5001).
+
+A redis server is started in tandem with hostname `redis` for your convienence.
+
 ## Running as Docker container
 
 If you run redis in a Docker container, the recommended way is to run rebrow in it's own Docker container, too.
