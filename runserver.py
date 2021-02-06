@@ -182,14 +182,14 @@ def keys(host, port, db):
         limited_keys = keys[offset:(perpage+offset)]
         types = {}
         for key in limited_keys:
-            types[key] = r.type(key)
+            types[key] = r.type(key).decode()
         return render_template('keys.html',
             host=host,
             port=port,
             db=db,
             dbsize=dbsize,
-            keys=limited_keys,
-            types=types,
+            keys=[k.decode() for k in limited_keys],
+            types=[t.decode() for t in types],
             offset=offset,
             perpage=perpage,
             pattern=pattern,
@@ -215,23 +215,23 @@ def key(host, port, db, key):
     del dump
     t = r.type(key)
     ttl = r.pttl(key)
-    if t == "string":
-        val = r.get(key).decode('utf-8', 'replace')
-    elif t == "list":
+    if t == b"string":
+        val = r.get(key).decode("utf-8", "replace")
+    elif t == b"list":
         val = r.lrange(key, 0, -1)
-    elif t == "hash":
+    elif t == b"hash":
         val = r.hgetall(key)
-    elif t == "set":
+    elif t == b"set":
         val = r.smembers(key)
-    elif t == "zset":
+    elif t == b"zset":
         val = r.zrange(key, 0, -1, withscores=True)
     return render_template('key.html',
         host=host,
         port=port,
         db=db,
-        key=key,
+        key=key.decode(),
         value=val,
-        type=t,
+        type=t.decode(),
         size=size,
         ttl=ttl / 1000.0,
         now=datetime.utcnow(),
@@ -271,9 +271,8 @@ def pubsub_ajax(host, port, db):
 def urlsafe_base64_encode(s):
     if type(s) == 'Markup':
         s = s.unescape()
-    s = s.encode('utf8')
-    s = base64.urlsafe_b64encode(s)
-    return Markup(s)
+    s = base64.urlsafe_b64encode(s.encode("utf8"))
+    return Markup(s.decode("utf8"))
 
 
 if __name__ == "__main__":
