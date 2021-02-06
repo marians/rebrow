@@ -6,6 +6,7 @@ from flask import render_template, redirect, url_for
 from json import loads as json_loads
 from rebrow.sharedlib.metadata import serverinfo_meta
 from redis.exceptions import ConnectionError
+from redis.sentinel import Sentinel
 import base64
 import os
 import redis
@@ -13,6 +14,19 @@ import time
 
 rebrow = Blueprint('rebrow', __name__)
 
+def get_redis(host, port, db, password, sentinel):
+  """
+  get redis instance
+  """
+  if sentinel == 'on':
+      _sentinel = Sentinel([(host, port)], socket_timeout=0.1)
+      return sentinel.master_for(
+          'mymaster', db=db, password=password, socket_timeout=0.1)
+  else:
+      if password == "":
+          return redis.StrictRedis(host=host, port=port, db=db)
+      else:
+          return redis.StrictRedis(host=host, port=port, db=db, password=password)
 
 @rebrow.route("/", methods=['GET', 'POST'])
 def login():
@@ -20,11 +34,17 @@ def login():
     Start page
     """
     if request.method == 'POST':
-        # TODO: test connection, handle failures
         host = request.form["host"]
         port = int(request.form["port"])
+        port = int(request.form["port"])
+        db = int(request.form["db"])
         db = int(request.form["db"])
         url = url_for("rebrow.server_db", host=host, port=port, db=db)
+        sentinel = request.form.get("sentinel")
+        if sentinel is None:
+            sentinel = 'off'
+        password = request.form["password"]
+        url = url_for("rebrow.server_db", host=host, port=port, db=db, password=password, sentinel=sentinel)
         return redirect(url)
     else:
         s = time.time()
@@ -39,13 +59,16 @@ def server_db(host, port, db):
     """
     s = time.time()
     try:
-        r = redis.StrictRedis(host=host, port=port, db=0)
+        password = request.args.get('password', default = '', type=str)
+        sentinel = request.args.get('sentinel', default = 'off', type=str)
+        r = get_redis(host, port, db, password, sentinel)
         info = r.info("all")
         dbsize = r.dbsize()
         return render_template('server.html',
                                host=host,
                                port=port,
                                db=db,
+                               password=password,
                                info=info,
                                dbsize=dbsize,
                                serverinfo_meta=serverinfo_meta,
@@ -65,7 +88,9 @@ def keys(host, port, db):
     """
     s = time.time()
     try:
-        r = redis.StrictRedis(host=host, port=port, db=db)
+        password = request.args.get('password', default = '', type=str)
+        sentinel = request.args.get('sentinel', default = 'off', type=str)
+        r = get_redis(host, port, db, password, sentinel)
         if request.method == "POST":
             action = request.form["action"]
             app.logger.debug(action)
@@ -93,6 +118,7 @@ def keys(host, port, db):
                                    host=host,
                                    port=port,
                                    db=db,
+                                   password=password,
                                    dbsize=dbsize,
                                    keys=[k.decode() for k in limited_keys],
                                    types=[t.decode() for t in types],
@@ -118,7 +144,9 @@ def key(host, port, db, key):
     key = base64.urlsafe_b64decode(key.encode("utf8"))
     s = time.time()
     try:
-        r = redis.StrictRedis(host=host, port=port, db=db)
+        password = request.args.get('password', default = '', type=str)
+        sentinel = request.args.get('sentinel', default = 'off', type=str)
+        r = get_redis(host, port, db, password, sentinel)
         dump = r.dump(key)
         if dump is None:
             abort(404)
@@ -146,6 +174,7 @@ def key(host, port, db, key):
                                host=host,
                                port=port,
                                db=db,
+                               password=password,
                                key=key.decode(),
                                value=val,
                                type=t.decode(),
@@ -168,15 +197,19 @@ def pubsub(host, port, db):
     List PubSub channels
     """
     s = time.time()
+    password = request.args.get('password', default = '', type=str)
+    sentinel = request.args.get('sentinel', default = 'off', type=str)
     return render_template('pubsub.html',
                            host=host,
                            port=port,
                            db=db,
+                           password=password,
+                           sentinel=sentinel,
                            duration=time.time()-s)
 
 
-def pubsub_event_stream(host, port, db, pattern):
-    r = redis.StrictRedis(host=host, port=port, db=db)
+def pubsub_event_stream(host, port, db, password, sentinel, pattern):
+    r = get_redis(host, port, db, password, sentinel)
     p = r.pubsub()
     p.psubscribe(pattern)
     for message in p.listen():
@@ -187,7 +220,10 @@ def pubsub_event_stream(host, port, db, pattern):
 @rebrow.route("/<host>:<int:port>/<int:db>/pubsub/api/")
 def pubsub_ajax(host, port, db):
     try:
-        return Response(pubsub_event_stream(host, port, db, pattern="*"),
+        password = request.args.get('password', default = '', type=str)
+        sentinel = request.args.get('sentinel', default = 'off', type=str)
+
+        return Response(pubsub_event_stream(host, port, db, password, sentinel, pattern="*"),
                         mimetype="text/event-stream")
     except ConnectionError as e:
         flash(f'ConnectionError: {e}', category="error")
