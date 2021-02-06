@@ -20,7 +20,7 @@ serverinfo_meta = {
     "cmdstat_dump": "Statistics for the dump command",
     "cmdstat_expire": "Statistics for the expire command",
     "cmdstat_flushall": "Statistics for the flushall command",
-    "cmdstat_get":"Statistics for the get command",
+    "cmdstat_get": "Statistics for the get command",
     "cmdstat_hgetall": "Statistics for the hgetall command",
     "cmdstat_hkeys": "Statistics for the hkeys command",
     "cmdstat_hmset": "Statistics for the hmset command",

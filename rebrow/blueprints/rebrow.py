@@ -12,6 +12,7 @@ import time
 
 rebrow = Blueprint('rebrow', __name__)
 
+
 @rebrow.route("/", methods=['GET', 'POST'])
 def login():
     """
@@ -24,10 +25,10 @@ def login():
         db = int(request.form["db"])
         url = url_for("rebrow.server_db", host=host, port=port, db=db)
         return redirect(url)
-    else: 
+    else:
         s = time.time()
         return render_template('login.html',
-            duration=time.time()-s)
+                               duration=time.time()-s)
 
 
 @rebrow.route("/<host>:<int:port>/<int:db>/")
@@ -40,13 +41,13 @@ def server_db(host, port, db):
     info = r.info("all")
     dbsize = r.dbsize()
     return render_template('server.html',
-        host=host,
-        port=port,
-        db=db,
-        info=info,
-        dbsize=dbsize,
-        serverinfo_meta=serverinfo_meta,
-        duration=time.time()-s)
+                           host=host,
+                           port=port,
+                           db=db,
+                           info=info,
+                           dbsize=dbsize,
+                           serverinfo_meta=serverinfo_meta,
+                           duration=time.time()-s)
 
 
 @rebrow.route("/<host>:<int:port>/<int:db>/keys/", methods=['GET', 'POST'])
@@ -63,9 +64,11 @@ def keys(host, port, db):
             if request.form["key"] is not None:
                 result = r.delete(request.form["key"])
                 if result == 1:
-                    flash("Key %s has been deleted." % request.form["key"], category="info")
+                    flash("Key %s has been deleted." %
+                          request.form["key"], category="info")
                 else:
-                    flash("Key %s could not be deleted." % request.form["key"], category="error")
+                    flash("Key %s could not be deleted." %
+                          request.form["key"], category="error")
         return redirect(request.url)
     else:
         offset = int(request.args.get("offset", "0"))
@@ -78,17 +81,17 @@ def keys(host, port, db):
         for key in limited_keys:
             types[key] = r.type(key).decode()
         return render_template('keys.html',
-            host=host,
-            port=port,
-            db=db,
-            dbsize=dbsize,
-            keys=[k.decode() for k in limited_keys],
-            types=[t.decode() for t in types],
-            offset=offset,
-            perpage=perpage,
-            pattern=pattern,
-            num_keys=len(keys),
-            duration=time.time()-s)
+                               host=host,
+                               port=port,
+                               db=db,
+                               dbsize=dbsize,
+                               keys=[k.decode() for k in limited_keys],
+                               types=[t.decode() for t in types],
+                               offset=offset,
+                               perpage=perpage,
+                               pattern=pattern,
+                               num_keys=len(keys),
+                               duration=time.time()-s)
 
 
 @rebrow.route("/<host>:<int:port>/<int:db>/keys/<key>/")
@@ -103,7 +106,7 @@ def key(host, port, db, key):
     dump = r.dump(key)
     if dump is None:
         abort(404)
-    #if t is None:
+    # if t is None:
     #    abort(404)
     size = len(dump)
     del dump
@@ -124,17 +127,17 @@ def key(host, port, db, key):
     elif t == b"zset":
         val = r.zrange(key, 0, -1, withscores=True)
     return render_template('key.html',
-        host=host,
-        port=port,
-        db=db,
-        key=key.decode(),
-        value=val,
-        type=t.decode(),
-        size=size,
-        ttl=ttl / 1000.0,
-        now=datetime.utcnow(),
-        expiration=datetime.utcnow() + timedelta(seconds=ttl / 1000.0),
-        duration=time.time()-s)
+                           host=host,
+                           port=port,
+                           db=db,
+                           key=key.decode(),
+                           value=val,
+                           type=t.decode(),
+                           size=size,
+                           ttl=ttl / 1000.0,
+                           now=datetime.utcnow(),
+                           expiration=datetime.utcnow() + timedelta(seconds=ttl / 1000.0),
+                           duration=time.time()-s)
 
 
 @rebrow.route("/<host>:<int:port>/<int:db>/pubsub/")
@@ -144,10 +147,10 @@ def pubsub(host, port, db):
     """
     s = time.time()
     return render_template('pubsub.html',
-        host=host,
-        port=port,
-        db=db,
-        duration=time.time()-s)
+                           host=host,
+                           port=port,
+                           db=db,
+                           duration=time.time()-s)
 
 
 def pubsub_event_stream(host, port, db, pattern):
@@ -162,5 +165,4 @@ def pubsub_event_stream(host, port, db, pattern):
 @rebrow.route("/<host>:<int:port>/<int:db>/pubsub/api/")
 def pubsub_ajax(host, port, db):
     return Response(pubsub_event_stream(host, port, db, pattern="*"),
-           mimetype="text/event-stream")
-
+                    mimetype="text/event-stream")

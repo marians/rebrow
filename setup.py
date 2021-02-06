@@ -27,6 +27,5 @@ if __name__ == "__main__":
         entry_points={
             'console_scripts': ['rebrow = rebrow.runserver:main'],
         },
-        zip_safe = False,
+        zip_safe=False,
     )
-
