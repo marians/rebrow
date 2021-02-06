@@ -5,6 +5,7 @@ from flask import current_app as app
 from flask import render_template, redirect, url_for
 from json import loads as json_loads
 from rebrow.sharedlib.metadata import serverinfo_meta
+from redis.exceptions import ConnectionError
 import base64
 import os
 import redis
@@ -37,17 +38,24 @@ def server_db(host, port, db):
     List all databases and show info on server
     """
     s = time.time()
-    r = redis.StrictRedis(host=host, port=port, db=0)
-    info = r.info("all")
-    dbsize = r.dbsize()
-    return render_template('server.html',
-                           host=host,
-                           port=port,
-                           db=db,
-                           info=info,
-                           dbsize=dbsize,
-                           serverinfo_meta=serverinfo_meta,
-                           duration=time.time()-s)
+    try:
+        r = redis.StrictRedis(host=host, port=port, db=0)
+        info = r.info("all")
+        dbsize = r.dbsize()
+        return render_template('server.html',
+                               host=host,
+                               port=port,
+                               db=db,
+                               info=info,
+                               dbsize=dbsize,
+                               serverinfo_meta=serverinfo_meta,
+                               duration=time.time()-s)
+    except ConnectionError as e:
+        flash(f'ConnectionError: {e}', category="error")
+        return redirect(url_for("rebrow.login"))
+    except Exception as e:
+        flash(f'Exception: {e}', category="error")
+        return redirect(url_for("rebrow.login"))
 
 
 @rebrow.route("/<host>:<int:port>/<int:db>/keys/", methods=['GET', 'POST'])
@@ -56,42 +64,49 @@ def keys(host, port, db):
     List keys for one database
     """
     s = time.time()
-    r = redis.StrictRedis(host=host, port=port, db=db)
-    if request.method == "POST":
-        action = request.form["action"]
-        app.logger.debug(action)
-        if action == "delkey":
-            if request.form["key"] is not None:
-                result = r.delete(request.form["key"])
-                if result == 1:
-                    flash("Key %s has been deleted." %
-                          request.form["key"], category="info")
-                else:
-                    flash("Key %s could not be deleted." %
-                          request.form["key"], category="error")
-        return redirect(request.url)
-    else:
-        offset = int(request.args.get("offset", "0"))
-        perpage = int(request.args.get("perpage", "10"))
-        pattern = request.args.get('pattern', '*')
-        dbsize = r.dbsize()
-        keys = sorted(r.keys(pattern))
-        limited_keys = keys[offset:(perpage+offset)]
-        types = {}
-        for key in limited_keys:
-            types[key] = r.type(key).decode()
-        return render_template('keys.html',
-                               host=host,
-                               port=port,
-                               db=db,
-                               dbsize=dbsize,
-                               keys=[k.decode() for k in limited_keys],
-                               types=[t.decode() for t in types],
-                               offset=offset,
-                               perpage=perpage,
-                               pattern=pattern,
-                               num_keys=len(keys),
-                               duration=time.time()-s)
+    try:
+        r = redis.StrictRedis(host=host, port=port, db=db)
+        if request.method == "POST":
+            action = request.form["action"]
+            app.logger.debug(action)
+            if action == "delkey":
+                if request.form["key"] is not None:
+                    result = r.delete(request.form["key"])
+                    if result == 1:
+                        flash("Key %s has been deleted." %
+                              request.form["key"], category="info")
+                    else:
+                        flash("Key %s could not be deleted." %
+                              request.form["key"], category="error")
+            return redirect(request.url)
+        else:
+            offset = int(request.args.get("offset", "0"))
+            perpage = int(request.args.get("perpage", "10"))
+            pattern = request.args.get('pattern', '*')
+            dbsize = r.dbsize()
+            keys = sorted(r.keys(pattern))
+            limited_keys = keys[offset:(perpage+offset)]
+            types = {}
+            for key in limited_keys:
+                types[key] = r.type(key).decode()
+            return render_template('keys.html',
+                                   host=host,
+                                   port=port,
+                                   db=db,
+                                   dbsize=dbsize,
+                                   keys=[k.decode() for k in limited_keys],
+                                   types=[t.decode() for t in types],
+                                   offset=offset,
+                                   perpage=perpage,
+                                   pattern=pattern,
+                                   num_keys=len(keys),
+                                   duration=time.time()-s)
+    except ConnectionError as e:
+        flash(f'ConnectionError: {e}', category="error")
+        return redirect(url_for("rebrow.login"))
+    except Exception as e:
+        flash(f'Exception: {e}', category="error")
+        return redirect(url_for("rebrow.login"))
 
 
 @rebrow.route("/<host>:<int:port>/<int:db>/keys/<key>/")
@@ -102,42 +117,49 @@ def key(host, port, db, key):
     """
     key = base64.urlsafe_b64decode(key.encode("utf8"))
     s = time.time()
-    r = redis.StrictRedis(host=host, port=port, db=db)
-    dump = r.dump(key)
-    if dump is None:
-        abort(404)
-    # if t is None:
-    #    abort(404)
-    size = len(dump)
-    del dump
-    t = r.type(key)
-    ttl = r.pttl(key)
-    if t == b"string":
-        val = r.get(key).decode("utf-8", "replace")
-        try:
-            val = json.dumps(json_loads(val), indent=3)
-        except ValueError:
-            pass
-    elif t == b"list":
-        val = r.lrange(key, 0, -1)
-    elif t == b"hash":
-        val = r.hgetall(key)
-    elif t == b"set":
-        val = r.smembers(key)
-    elif t == b"zset":
-        val = r.zrange(key, 0, -1, withscores=True)
-    return render_template('key.html',
-                           host=host,
-                           port=port,
-                           db=db,
-                           key=key.decode(),
-                           value=val,
-                           type=t.decode(),
-                           size=size,
-                           ttl=ttl / 1000.0,
-                           now=datetime.utcnow(),
-                           expiration=datetime.utcnow() + timedelta(seconds=ttl / 1000.0),
-                           duration=time.time()-s)
+    try:
+        r = redis.StrictRedis(host=host, port=port, db=db)
+        dump = r.dump(key)
+        if dump is None:
+            abort(404)
+        # if t is None:
+        #    abort(404)
+        size = len(dump)
+        del dump
+        t = r.type(key)
+        ttl = r.pttl(key)
+        if t == b"string":
+            val = r.get(key).decode("utf-8", "replace")
+            try:
+                val = json.dumps(json_loads(val), indent=3)
+            except ValueError:
+                pass
+        elif t == b"list":
+            val = r.lrange(key, 0, -1)
+        elif t == b"hash":
+            val = r.hgetall(key)
+        elif t == b"set":
+            val = r.smembers(key)
+        elif t == b"zset":
+            val = r.zrange(key, 0, -1, withscores=True)
+        return render_template('key.html',
+                               host=host,
+                               port=port,
+                               db=db,
+                               key=key.decode(),
+                               value=val,
+                               type=t.decode(),
+                               size=size,
+                               ttl=ttl / 1000.0,
+                               now=datetime.utcnow(),
+                               expiration=datetime.utcnow() + timedelta(seconds=ttl / 1000.0),
+                               duration=time.time()-s)
+    except ConnectionError as e:
+        flash(f'ConnectionError: {e}', category="error")
+        return redirect(url_for("rebrow.login"))
+    except Exception as e:
+        flash(f'Exception: {e}', category="error")
+        return redirect(url_for("rebrow.login"))
 
 
 @rebrow.route("/<host>:<int:port>/<int:db>/pubsub/")
@@ -164,5 +186,12 @@ def pubsub_event_stream(host, port, db, pattern):
 
 @rebrow.route("/<host>:<int:port>/<int:db>/pubsub/api/")
 def pubsub_ajax(host, port, db):
-    return Response(pubsub_event_stream(host, port, db, pattern="*"),
-                    mimetype="text/event-stream")
+    try:
+        return Response(pubsub_event_stream(host, port, db, pattern="*"),
+                        mimetype="text/event-stream")
+    except ConnectionError as e:
+        flash(f'ConnectionError: {e}', category="error")
+        return redirect(url_for("rebrow.login"))
+    except Exception as e:
+        flash(f'Exception: {e}')
+        return redirect(url_for("rebrow.login"))
