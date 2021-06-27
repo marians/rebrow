@@ -1,12 +1,16 @@
-FROM python:2.7-alpine
+FROM python:3.9-alpine
 
-MAINTAINER Marian Steinbach <marian@giantswarm.io>
+MAINTAINER Jonathan Kelley <jonk@omg.lol>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ADD requirements.txt /
-RUN pip install -r /requirements.txt
+#ADD requirements.txt /
+#RUN pip install -r /requirements.txt
 ADD . /app/
 
+WORKDIR /app
+
+RUN python3 setup.py install
+
 EXPOSE 5001
-ENTRYPOINT ["python", "-u", "/app/runserver.py"]
+ENTRYPOINT ["rebrow"]

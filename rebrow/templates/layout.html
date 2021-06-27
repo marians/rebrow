@@ -23,19 +23,19 @@
         <ul class="nav navbar-nav">
         	{% if request.path != "/" %}
         		<li 
-        		{% if url_for("server_db", host=host, port=port, db=db) == request.path %}
+        		{% if url_for("rebrow.server_db", host=host, port=port, db=db) == request.path %}
           	class="active"
           	{% endif %}
           	><a href="/{{ host }}:{{ port }}/{{ db }}/">Server Status</a></li>
 
           	<li
-          	{% if url_for("keys", host=host, port=port, db=db) in request.path %}
+          	{% if url_for("rebrow.keys", host=host, port=port, db=db) in request.path %}
           	class="active"
           	{% endif %}
           	><a href="/{{ host }}:{{ port }}/{{ db }}/keys/">Keys</a></li>
 
             <li
-            {% if url_for("pubsub", host=host, port=port, db=db) in request.path %}
+            {% if url_for("rebrow.pubsub", host=host, port=port, db=db) in request.path %}
             class="active"
             {% endif %}
             ><a href="/{{ host }}:{{ port }}/{{ db }}/pubsub/">PubSub</a></li>
@@ -70,7 +70,7 @@
     <div class="container">
     	<div class="row">
 				<div class="col-md-9">
-      		<span class="logo"><span class="re">re</span>brow</span> is free software under the terms of the MIT license. Contribute on <a href="https://github.com/marians/rebrow/" target="_blank">GitHub</a>.
+      		<span class="logo"><span class="re">re</span>brow</span> is free software under the terms of the MIT license. Contribute on <a href="https://github.com/jondkelley/rebrow-modernized" target="_blank">GitHub</a>.
       	</div>
       	<div class="col-md-3">
       		Duration: {{ "%.3f"|format(duration*1000) }} Millis

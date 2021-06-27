@@ -1,14 +1,28 @@
-rebrow - Python-Flask-based Browser for Redis Content
+rebrow-modernized - Python-Flask-based Browser for Redis Content
 =====================================================
 
-Built for the developer who needs to look into a Redis store.
-Allows for inspection and deletion of keys and follows PubSub messages. Also displays
+## Fork Info
+
+I forked this because the upstream seems abandoned.
+I've added some features for my workplace at [LogDNA](https://logdna.com/).
+
+Here's the features added in this fork:
+
+* Upgrade for Python3 (unicode support) ✅
+* Move the code into Flask blueprint pattern. ✅
+* Add docker-compose file with a Redis instance for testing. ✅
+* Bump flask dependency from 1.0 to 1.1.0 ✅
+* Add (*optional*) password support for Redis instances (thanks to [kveroneau](https://github.com/kveroneau)) ✅
+
+## Project Information
+
+Built for the Python developer who needs to look into a Redis store. Allows for inspection and deletion of keys and follows PubSub messages. Also displays
 some runtime and configuration information.
 
-## Features
+## Primary Features
 
 * Web based
-* Runs in Python 2.7
+* Runs in Python 3.9.1
 * Lightweight requirements
 * Search for keys using patterns
 * Delete single keys
@@ -19,30 +33,48 @@ some runtime and configuration information.
 
 Execute this:
 
-    git clone https://github.com/marians/rebrow.git
+    git clone https://github.com/jondkelley/rebrow-modernized.git
     cd rebrow
     virtualenv venv
     source venv/bin/activate
-    pip install -r requirements.txt
-    python runserver.py
+    python3 setup.py install
+    rebrow &
 
 Then open [127.0.0.1:5001](http://127.0.0.1:5001).
+
+## Running in docker-compose
+
+If you have docker-compose installed, you can simply run
+
+```
+docker-compose build
+docker-compose up
+```
+
+Then open [127.0.0.1:5001](http://127.0.0.1:5001).
+
+A redis server is started in tandem with hostname `redis` for your convienence.
 
 ## Running as Docker container
 
 If you run redis in a Docker container, the recommended way is to run rebrow in it's own Docker container, too.
 
-You can use the ready-made public image [marian/rebrow](https://registry.hub.docker.com/u/marian/rebrow/).
+You can use the ready-made public image [jondkelley/rebrow](https://registry.hub.docker.com/r/jondkelley/rebrow).
 
 Alternatively, the provided `Dockerfile` can be used to create the according image. The `Makefile` contains example commands to build the image and run a container from the image.
 
 When running the image, make sure to get your links right. For example, if your redis server is running in a container named `myredis`, start your rebrow container like this:
 
 ```
-docker run --rm -ti -p 5001:5001 --link myredis:myredis marian/rebrow
+docker run --rm -ti -p 5001:5001 --link myredis:myredis jondkelley/rebrow:latest
 ```
 
-Then access rebrow via `http://<your-docker-ip>:5001/` and set the host name in the login screen to `myredis`.
+Then access rebrow via `http://<your-docker-ip>:5001/` and set the host name in the login screen to `redis` or your Redis instance if it's something else..
+
+## Contributers
+
+* 2014 Marian Steinbach
+* 2021 Jonathan Kelley
 
 ## License
 
